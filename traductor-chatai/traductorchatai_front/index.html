@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+  <title>Chat con Open AI</title>
+</head>
+<body>
+  <header class="chat__header">
+    <img class="header__icon" src="assets/img/icon3d.png" alt="logo"/>
+    <h1 class="header__title">Chat de traducciones</h1>
+  </header>
+
+  <section class="chat">
+    <div class="chat__messages">
+
+    </div>
+    <div class="chat__input-group">
+      <input type="text" id="inputText" class="chat__input" placeholder="Escribe tu mensaje aquí...">
+      <div class="chat__inputs">
+        <select class="chat__select" id="targetLang">
+          <option value="es">Español</option>
+          <option value="en">Inglés</option>
+          <option value="fr">Francés</option>
+          <option value="de">Alemán</option>
+          <option value="it">Italiano</option>
+        </select>
+        <button id="traslateButton" class="chat__button">Traducir</button>
+      </div>
+    </div>
+  </section>
+  
+</body>
+</html>
