@@ -1,0 +1,42 @@
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config(); // Para manejar variables de entorno
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware para parsear JSON
+app.use(cors()); // Habilitar CORS para todas las rutas
+app.use(express.json());
+
+// Configuración de la API de DeepSeek
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'tu_api_key_aquí'; // Usa variables de entorno
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
+// Endpoint para enviar mensajes a DeepSeek
+app.post('/api/chatbot', async (req, res) => {
+  const contexto = `
+    Eres un asistente virtual del Supermercado "OLimpica". Tu tarea es ayudar a los usuarios a encontrar información sobre productos y servicios del supermercado. Responde de manera clara y concisa.
+    Informacion del supermercado:
+    - Nombre: OLimpica
+    - Ubicación: Calle el parque, numero 41E esquina, Barranquilla, Atlántico, Colombia
+    - Horario: Lunes a Domingo de 8:00 AM a 10:00 PM
+    - Productos: Frutas, verduras, carnes, lácteos, panadería, productos de limpieza, productos de cuidado personal, electrodomensticos.
+    - Marcas: Coca-Cola, Pepsi, Nestlé, Colechera, Bimbo, Colgate-Palmolive, Samurai, Kaley.
+    - Metodos de pago: Efectivo, tarjeta de crédito, tarjeta de débito, pago móvil.
+    Solo responde con la información que te he proporcionado. No hagas suposiciones ni inventes información adicional.
+  `;
+
+
+});
+
+// Ruta de prueba
+app.get('/', (req, res) => {
+    res.send('¡Servidor de DeepSeek Chat funcionando! 🚀');
+});
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
