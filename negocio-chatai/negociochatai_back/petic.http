@@ -2,5 +2,5 @@ POST http://localhost:3000/api/chatbot
 content-type: application/json
 
 {
-    "message": "cuando atienden"
+    "message": "cual es la direccion"
 }

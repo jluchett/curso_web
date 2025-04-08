@@ -25,8 +25,39 @@ app.post('/api/chatbot', async (req, res) => {
     - Productos: Frutas, verduras, carnes, lácteos, panadería, productos de limpieza, productos de cuidado personal, electrodomensticos.
     - Marcas: Coca-Cola, Pepsi, Nestlé, Colechera, Bimbo, Colgate-Palmolive, Samurai, Kaley.
     - Metodos de pago: Efectivo, tarjeta de crédito, tarjeta de débito, pago móvil.
-    Solo responde con la información que te he proporcionado. No hagas suposiciones ni inventes información adicional.
+    Solo responde con la información que te he proporcionado. No hagas suposiciones ni inventes información adicional, responde de la forma mas corta y directa usando los minimos de tokens.
   `;
+
+  const { message } = req.body; // Mensaje del cliente
+  if (!message) {
+    return res.status(400).json({ error: 'El mensaje es requerido.' });
+  }
+
+  try {
+    const response = await axios.post(DEEPSEEK_API_URL, {
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: contexto },
+        { role: 'user', content: message }
+      ],
+      max_tokens: 200,
+      temperature: 0.7,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const reply = response.data.choices[0].message.content;
+    res.json({ reply });
+    
+  } catch (error) {
+    console.error('Error al procesar la solicitud:', error);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+    
+  }
+
 
 
 });
