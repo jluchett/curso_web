@@ -14,9 +14,9 @@ app.use(express.json());
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'tu_api_key_aquí'; // Usa variables de entorno
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
-// Endpoint para enviar mensajes a DeepSeek
-app.post('/api/chatbot', async (req, res) => {
-  const contexto = `
+
+
+const context = `
     Eres un asistente virtual del Supermercado "OLimpica". Tu tarea es ayudar a los usuarios a encontrar información sobre productos y servicios del supermercado. Responde de manera clara y concisa.
     Informacion del supermercado:
     - Nombre: OLimpica
@@ -27,18 +27,33 @@ app.post('/api/chatbot', async (req, res) => {
     - Metodos de pago: Efectivo, tarjeta de crédito, tarjeta de débito, pago móvil.
     Solo responde con la información que te he proporcionado. No hagas suposiciones ni inventes información adicional, responde de la forma mas corta y directa usando los minimos de tokens.
   `;
+let convesations = {};
+// Endpoint para enviar mensajes a DeepSeek
+app.post('/api/chatbot', async (req, res) => {
+  
+  const { userId, message } = req.body; // Mensaje del cliente
 
-  const { message } = req.body; // Mensaje del cliente
   if (!message) {
     return res.status(400).json({ error: 'El mensaje es requerido.' });
+  }
+
+  if (!convesations[userId]) {// Inicializa la conversación si no existe
+    convesations[userId] = []; 
+  }
+  
+  // Agrega el mensaje del usuario a la conversación
+  convesations[userId].push({ role: 'user', content: message });
+
+  if (convesations[userId].length > 20) { 
+    convesations[userId].shift(); // Mantiene solo los últimos 20 mensajes
   }
 
   try {
     const response = await axios.post(DEEPSEEK_API_URL, {
       model: 'deepseek-chat',
       messages: [
-        { role: 'system', content: contexto },
-        { role: 'user', content: message }
+        { role: 'system', content: context },
+        ...convesations[userId]
       ],
       max_tokens: 200,
       temperature: 0.7,
@@ -50,6 +65,8 @@ app.post('/api/chatbot', async (req, res) => {
     });
 
     const reply = response.data.choices[0].message.content;
+    // Agrega la respuesta del asistente a la conversación
+    convesations[userId].push({ role: 'assistant', content: reply });
     res.json({ reply });
     
   } catch (error) {
